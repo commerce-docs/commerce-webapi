@@ -78,3 +78,5 @@ npx apollo-cli download-schema $ENDPOINT_URL --output schema.json
 where `$ENDPOINT_URL` is a placeholder for a URL's endpoint.
 
 For more information about SpectaQL, refer to <https://github.com/anvilco/spectaql>.
+
+Just for testing.

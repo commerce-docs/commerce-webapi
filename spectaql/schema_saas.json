@@ -10636,6 +10636,77 @@
         ]
       },
       {
+        "kind": "OBJECT",
+        "name": "CategoryImage",
+        "description": "Represents an image associated with a category.",
+        "fields": [
+          {
+            "name": "url",
+            "description": "The URL where the image is hosted.",
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "label",
+            "description": "A descriptive label or alt text for the image.",
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "roles",
+            "description": "Standard predefined roles for the image.",
+            "args": [],
+            "type": {
+              "kind": "LIST",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "customRoles",
+            "description": "Custom roles specific to the implementation.",
+            "args": [],
+            "type": {
+              "kind": "LIST",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          }
+        ],
+        "inputFields": null,
+        "interfaces": [],
+        "enumValues": null,
+        "possibleTypes": null
+      },
+      {
         "kind": "INTERFACE",
         "name": "CategoryInterface",
         "description": "Contains the full set of attributes that can be returned in a category search.",
@@ -10966,12 +11037,63 @@
       },
       {
         "kind": "OBJECT",
+        "name": "CategoryMetaTags",
+        "description": "SEO metadata tags for the category.",
+        "fields": [
+          {
+            "name": "title",
+            "description": "The page title for SEO purposes.",
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "description",
+            "description": "The meta description for SEO purposes.",
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "keywords",
+            "description": "Keywords associated with the category for SEO.",
+            "args": [],
+            "type": {
+              "kind": "LIST",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          }
+        ],
+        "inputFields": null,
+        "interfaces": [],
+        "enumValues": null,
+        "possibleTypes": null
+      },
+      {
+        "kind": "OBJECT",
         "name": "CategoryNavigationView",
-        "description": null,
+        "description": "Represents a category optimized for navigation menus, with nested children for building navigation trees.",
         "fields": [
           {
             "name": "slug",
-            "description": null,
+            "description": "The unique URL-friendly identifier for the category.",
             "args": [],
             "type": {
               "kind": "NON_NULL",
@@ -10987,7 +11109,7 @@
           },
           {
             "name": "name",
-            "description": null,
+            "description": "The display name of the category.",
             "args": [],
             "type": {
               "kind": "NON_NULL",
@@ -11003,7 +11125,7 @@
           },
           {
             "name": "children",
-            "description": null,
+            "description": "The direct child categories for building nested navigation menus.",
             "args": [],
             "type": {
               "kind": "LIST",
@@ -11032,11 +11154,11 @@
       {
         "kind": "OBJECT",
         "name": "CategoryProductView",
-        "description": "Defines the category fields available to the ProductView.",
+        "description": "Represents category information associated with a product, including hierarchical parent relationships.",
         "fields": [
           {
             "name": "name",
-            "description": "The name of the category.",
+            "description": "The display name of the category.",
             "args": [],
             "type": {
               "kind": "NON_NULL",
@@ -11052,7 +11174,7 @@
           },
           {
             "name": "slug",
-            "description": "The slug of the category.",
+            "description": "The unique URL-friendly identifier for the category.",
             "args": [],
             "type": {
               "kind": "NON_NULL",
@@ -11068,7 +11190,7 @@
           },
           {
             "name": "level",
-            "description": "The level of the category.",
+            "description": "The depth level of the category in the hierarchy (0 for root categories).",
             "args": [],
             "type": {
               "kind": "NON_NULL",
@@ -11084,7 +11206,7 @@
           },
           {
             "name": "parents",
-            "description": "The parents of the category.",
+            "description": "The ancestor categories in the hierarchy, ordered from root to immediate parent.",
             "args": [],
             "type": {
               "kind": "LIST",
@@ -11446,11 +11568,11 @@
       {
         "kind": "OBJECT",
         "name": "CategoryTreeView",
-        "description": null,
+        "description": "Represents a category within a hierarchical tree structure, including parent and children relationships.",
         "fields": [
           {
             "name": "slug",
-            "description": null,
+            "description": "The unique URL-friendly identifier for the category.",
             "args": [],
             "type": {
               "kind": "NON_NULL",
@@ -11466,7 +11588,7 @@
           },
           {
             "name": "name",
-            "description": null,
+            "description": "The display name of the category.",
             "args": [],
             "type": {
               "kind": "NON_NULL",
@@ -11481,8 +11603,48 @@
             "deprecationReason": null
           },
           {
+            "name": "description",
+            "description": "A detailed description of the category.",
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "metaTags",
+            "description": "SEO metadata tags for the category.",
+            "args": [],
+            "type": {
+              "kind": "OBJECT",
+              "name": "CategoryMetaTags",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "images",
+            "description": "Visual images associated with the category.",
+            "args": [],
+            "type": {
+              "kind": "LIST",
+              "name": null,
+              "ofType": {
+                "kind": "OBJECT",
+                "name": "CategoryImage",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "level",
-            "description": null,
+            "description": "The depth level of the category in the tree hierarchy (0 for root categories).",
             "args": [],
             "type": {
               "kind": "SCALAR",
@@ -11494,7 +11656,7 @@
           },
           {
             "name": "parentSlug",
-            "description": null,
+            "description": "The slug of the parent category, if any.",
             "args": [],
             "type": {
               "kind": "SCALAR",
@@ -11506,7 +11668,7 @@
           },
           {
             "name": "childrenSlugs",
-            "description": null,
+            "description": "The slugs of all direct child categories.",
             "args": [],
             "type": {
               "kind": "LIST",
@@ -11890,11 +12052,11 @@
       {
         "kind": "INTERFACE",
         "name": "CategoryViewV2",
-        "description": "Defines a category with essential identifying fields.",
+        "description": "Base interface defining essential category fields shared across all category views.",
         "fields": [
           {
             "name": "slug",
-            "description": "The slug of the category.",
+            "description": "The unique URL-friendly identifier for the category.",
             "args": [],
             "type": {
               "kind": "NON_NULL",
@@ -11910,7 +12072,7 @@
           },
           {
             "name": "name",
-            "description": "The name of the category.",
+            "description": "The display name of the category.",
             "args": [],
             "type": {
               "kind": "NON_NULL",
@@ -58708,7 +58870,7 @@
           },
           {
             "name": "navigation",
-            "description": null,
+            "description": "Retrieves the navigation tree for a given product family.",
             "args": [
               {
                 "name": "family",
@@ -58739,7 +58901,7 @@
           },
           {
             "name": "categoryTree",
-            "description": null,
+            "description": "Retrieves category tree nodes, optionally filtered by slugs and limited by depth.",
             "args": [
               {
                 "name": "family",

@@ -20,7 +20,6 @@ The `recaptchaFormConfig` reference provides detailed information about the type
 
 * &#8203;<Edition name="paas" /> [On-Premises/Cloud](https://developer.adobe.com/commerce/webapi/graphql-api/index.html#query-recaptchaV3Config)
 
-
 ## Example usage
 
 The following query returns information about the reCaptcha configuration for the CONTACT form:

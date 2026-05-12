@@ -6,7 +6,7 @@ securityDefinitions:
     in: header
 swagger: '2.0'
 info:
-  version: 2.4.9-beta-1
+  version: 2.4.9
   title: Commerce Customer REST endpoints - All inclusive
   description:
     "$ref": "../_includes/redocly-intro.md"
@@ -21,7 +21,6 @@ tags:
 - name: carts/guest-carts/{cartId}/giftCards
 - name: carts/guest-carts/{cartId}/giftCards/{giftCardCode}
 - name: carts/mine
-- name: carts/mine/balance/apply
 - name: carts/mine/checkGiftCard/{giftCardCode}
 - name: carts/mine/collect-totals
 - name: carts/mine/payment-information
@@ -360,32 +359,6 @@ paths:
           schema:
             "$ref": "#/definitions/error-response"
       summary: carts/mine
-  "/V1/carts/mine/balance/apply":
-    post:
-      tags:
-      - carts/mine/balance/apply
-      description: Apply store credit
-      operationId: PostV1CartsMineBalanceApply
-      consumes:
-      - application/json
-      - application/xml
-      produces:
-      - application/json
-      - application/xml
-      responses:
-        '200':
-          description: 200 Success.
-          schema:
-            type: boolean
-        '401':
-          description: 401 Unauthorized
-          schema:
-            "$ref": "#/definitions/error-response"
-        default:
-          description: Unexpected error
-          schema:
-            "$ref": "#/definitions/error-response"
-      summary: carts/mine/balance/apply
   "/V1/carts/mine/checkGiftCard/{giftCardCode}":
     get:
       tags:
@@ -7735,7 +7708,6 @@ x-tagGroups:
   - carts/guest-carts/{cartId}/giftCards
   - carts/guest-carts/{cartId}/giftCards/{giftCardCode}
   - carts/mine
-  - carts/mine/balance/apply
   - carts/mine/checkGiftCard/{giftCardCode}
   - carts/mine/collect-totals
   - carts/mine/payment-information

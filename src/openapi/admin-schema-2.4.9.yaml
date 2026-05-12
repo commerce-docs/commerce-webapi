@@ -6,7 +6,7 @@ securityDefinitions:
     in: header
 swagger: '2.0'
 info:
-  version: 2.4.9-beta-1
+  version: 2.4.9
   title: Commerce Admin REST endpoints - All inclusive
   description:
     "$ref": "../_includes/redocly-intro.md"
@@ -50,6 +50,8 @@ tags:
 - name: bundle-products/options/types
 - name: carts/
 - name: carts/{cartId}
+- name: carts/{cartId}/balance/apply
+- name: carts/{cartId}/balance/unapply
 - name: carts/{cartId}/billing-address
 - name: carts/{cartId}/coupons
 - name: carts/{cartId}/coupons/{couponCode}
@@ -169,6 +171,7 @@ tags:
 - name: customerGroups/search
 - name: customers
 - name: customers/{customerId}
+- name: customers/{customerId}/balance/{websiteId}
 - name: customers/{customerId}/billingAddress
 - name: customers/{customerId}/carts
 - name: customers/{customerId}/companies
@@ -3674,6 +3677,68 @@ paths:
           schema:
             "$ref": "#/definitions/error-response"
       summary: carts/{cartId}
+  "/V1/carts/{cartId}/balance/apply":
+    post:
+      tags:
+      - carts/{cartId}/balance/apply
+      description: Apply store credit
+      operationId: PostV1CartsCartIdBalanceApply
+      consumes:
+      - application/json
+      - application/xml
+      produces:
+      - application/json
+      - application/xml
+      parameters:
+      - name: cartId
+        in: path
+        type: integer
+        required: true
+      responses:
+        '200':
+          description: 200 Success.
+          schema:
+            type: boolean
+        '401':
+          description: 401 Unauthorized
+          schema:
+            "$ref": "#/definitions/error-response"
+        default:
+          description: Unexpected error
+          schema:
+            "$ref": "#/definitions/error-response"
+      summary: carts/{cartId}/balance/apply
+  "/V1/carts/{cartId}/balance/unapply":
+    delete:
+      tags:
+      - carts/{cartId}/balance/unapply
+      description: Remove store credit from cart
+      operationId: DeleteV1CartsCartIdBalanceUnapply
+      consumes:
+      - application/json
+      - application/xml
+      produces:
+      - application/json
+      - application/xml
+      parameters:
+      - name: cartId
+        in: path
+        type: integer
+        required: true
+      responses:
+        '200':
+          description: 200 Success.
+          schema:
+            type: boolean
+        '401':
+          description: 401 Unauthorized
+          schema:
+            "$ref": "#/definitions/error-response"
+        default:
+          description: Unexpected error
+          schema:
+            "$ref": "#/definitions/error-response"
+      summary: carts/{cartId}/balance/unapply
   "/V1/carts/{cartId}/billing-address":
     get:
       tags:
@@ -9182,6 +9247,46 @@ paths:
           schema:
             "$ref": "#/definitions/error-response"
       summary: customers/{customerId}
+  "/V1/customers/{customerId}/balance/{websiteId}":
+    get:
+      tags:
+      - customers/{customerId}/balance/{websiteId}
+      description: Get customer store credit balance for a given website
+      operationId: GetV1CustomersCustomerIdBalanceWebsiteId
+      consumes:
+      - application/json
+      - application/xml
+      produces:
+      - application/json
+      - application/xml
+      parameters:
+      - name: customerId
+        in: path
+        type: integer
+        required: true
+      - name: websiteId
+        in: path
+        type: integer
+        required: true
+        description: If null, will use current store's website ID
+      responses:
+        '200':
+          description: 200 Success.
+          schema:
+            "$ref": "#/definitions/customer-balance-data-balance-interface"
+        '400':
+          description: 400 Bad Request
+          schema:
+            "$ref": "#/definitions/error-response"
+        '401':
+          description: 401 Unauthorized
+          schema:
+            "$ref": "#/definitions/error-response"
+        default:
+          description: Unexpected error
+          schema:
+            "$ref": "#/definitions/error-response"
+      summary: customers/{customerId}/balance/{websiteId}
   "/V1/customers/{customerId}/billingAddress":
     get:
       tags:
@@ -33031,6 +33136,9 @@ definitions:
   sales-rule-data-condition-extension-interface:
     type: object
     description: ExtensionInterface class for @see \Magento\SalesRule\Api\Data\ConditionInterface
+    properties:
+      attribute_scope:
+        type: string
   sales-rule-data-rule-extension-interface:
     type: object
     description: ExtensionInterface class for @see \Magento\SalesRule\Api\Data\RuleInterface
@@ -33413,6 +33521,47 @@ definitions:
         description: Authorization status
     required:
     - authorized
+  checkout-agreements-data-agreement-interface:
+    type: object
+    description: Interface AgreementInterface
+    properties:
+      agreement_id:
+        type: integer
+        description: Agreement ID.
+      name:
+        type: string
+        description: Agreement name.
+      content:
+        type: string
+        description: Agreement content.
+      content_height:
+        type: string
+        description: Agreement content height. Otherwise, null.
+      checkbox_text:
+        type: string
+        description: Agreement checkbox text.
+      is_active:
+        type: boolean
+        description: Agreement status.
+      is_html:
+        type: boolean
+        description: "* true - HTML. * false - plain text."
+      mode:
+        type: integer
+        description: The agreement applied mode.
+      extension_attributes:
+        "$ref": "#/definitions/checkout-agreements-data-agreement-extension-interface"
+    required:
+    - agreement_id
+    - name
+    - content
+    - checkbox_text
+    - is_active
+    - is_html
+    - mode
+  checkout-agreements-data-agreement-extension-interface:
+    type: object
+    description: ExtensionInterface class for @see \Magento\CheckoutAgreements\Api\Data\AgreementInterface
   company-data-company-search-results-interface:
     type: object
     description: Interface for company search results
@@ -33510,14 +33659,14 @@ definitions:
     type: object
     description: ExtensionInterface class for @see \Magento\Company\Api\Data\CompanyInterface
     properties:
+      quote_config:
+        "$ref": "#/definitions/negotiable-quote-data-company-quote-config-interface"
       applicable_payment_method:
         type: integer
       available_payment_methods:
         type: string
       use_config_settings:
         type: integer
-      quote_config:
-        "$ref": "#/definitions/negotiable-quote-data-company-quote-config-interface"
       is_purchase_order_enabled:
         type: boolean
       applicable_shipping_method:
@@ -33685,47 +33834,6 @@ definitions:
     - items
     - search_criteria
     - total_count
-  checkout-agreements-data-agreement-interface:
-    type: object
-    description: Interface AgreementInterface
-    properties:
-      agreement_id:
-        type: integer
-        description: Agreement ID.
-      name:
-        type: string
-        description: Agreement name.
-      content:
-        type: string
-        description: Agreement content.
-      content_height:
-        type: string
-        description: Agreement content height. Otherwise, null.
-      checkbox_text:
-        type: string
-        description: Agreement checkbox text.
-      is_active:
-        type: boolean
-        description: Agreement status.
-      is_html:
-        type: boolean
-        description: "* true - HTML. * false - plain text."
-      mode:
-        type: integer
-        description: The agreement applied mode.
-      extension_attributes:
-        "$ref": "#/definitions/checkout-agreements-data-agreement-extension-interface"
-    required:
-    - agreement_id
-    - name
-    - content
-    - checkbox_text
-    - is_active
-    - is_html
-    - mode
-  checkout-agreements-data-agreement-extension-interface:
-    type: object
-    description: ExtensionInterface class for @see \Magento\CheckoutAgreements\Api\Data\AgreementInterface
   tax-data-tax-rate-interface:
     type: object
     description: Tax rate interface.
@@ -34737,6 +34845,29 @@ definitions:
     required:
     - url
     - initialization_vector
+  customer-balance-data-balance-interface:
+    type: object
+    description: Customer store credit balance data interface
+    properties:
+      balance_id:
+        type: integer
+        description: Balance ID
+      customer_id:
+        type: integer
+        description: Customer ID
+      website_id:
+        type: integer
+        description: Website ID
+      amount:
+        type: number
+        description: Balance amount
+      base_currency_code:
+        type: string
+        description: Base currency code
+    required:
+    - customer_id
+    - website_id
+    - amount
   gift-wrapping-data-wrapping-interface:
     type: object
     description: Interface WrappingInterface
@@ -36670,6 +36801,8 @@ x-tagGroups:
   - carts/mine/totals-information
   - carts/search
   - carts/{cartId}
+  - carts/{cartId}/balance/apply
+  - carts/{cartId}/balance/unapply
   - carts/{cartId}/billing-address
   - carts/{cartId}/coupons
   - carts/{cartId}/coupons/deleteByCodes
@@ -36791,6 +36924,7 @@ x-tagGroups:
   - customers/search
   - customers/validate
   - customers/{customerId}
+  - customers/{customerId}/balance/{websiteId}
   - customers/{customerId}/billingAddress
   - customers/{customerId}/carts
   - customers/{customerId}/companies

@@ -25,7 +25,7 @@
     "remark-heading-id": "^1.0.1",
     "remark-lint-frontmatter-schema": "^3.15.4",
     "remark-validate-links": "13.0.1",
-    "spectaql": "^3.0.6"
+    "spectaql": "^3.0.9"
   },
   "scripts": {
     "start": "NODE_OPTIONS='--max-old-space-size=8192' gatsby build && gatsby serve",
@@ -41,6 +41,7 @@
     "build:spectaql:2.4.7": "spectaql --target-file index.html --config spectaql/config_2.4.7.yml",
     "build:spectaql:saas": "spectaql --target-file index.html --config spectaql/config_saas.yml",
     "build:spectaql:2.4.8": "spectaql --target-file index.html --config spectaql/config_2.4.8.yml",
+    "generate:graphql-api-md": "node scripts/generate-spectaql-md.js",
     "dev:spectaql": "spectaql --development-mode-live --config spectaql/config.yml"
   },
   "packageManager": "yarn@3.2.4"

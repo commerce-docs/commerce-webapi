@@ -234,17 +234,33 @@ jobs:
           ROOT_DIR=$(pwd)
           cd "$ROOT_DIR/content"
 
-          # Fragment blocks fetch .plain.html at runtime; wget only crawls src/pages topics.
-          # Pre-render every include file so Fragment blocks resolve on GitHub Pages.
-          find src/pages/includes -name "*.md" | while read -r mdfile; do
-            rel_path=$(echo "$mdfile" | sed 's|src/pages/||' | sed 's|\.md$||')
-            out_dir="$ROOT_DIR/_site/localhost+3000/$(dirname "$rel_path")"
-            mkdir -p "$out_dir"
-            curl -sf "http://localhost:3000/${SITE_PATH}/${rel_path}.plain.html" \
-              -o "$out_dir/$(basename "$rel_path").plain.html" \
-              && echo "✓ ${rel_path}.plain.html" \
-              || echo "✗ ${rel_path}.plain.html"
-          done
+          # Fragment blocks fetch .plain.html at runtime on GitHub Pages. The local dev
+          # stack does not serve .plain.html URLs — fetch the rendered page and extract
+          # <main> content to match the production .plain.html fragment format.
+          # Output must be under ${SITE_PATH}/ so relative fetches from topic pages resolve.
+          if [ -d src/pages/includes ]; then
+            FAILED=0
+            while IFS= read -r mdfile; do
+              rel_path=$(echo "$mdfile" | sed 's|src/pages/||' | sed 's|\.md$||')
+              out_dir="$ROOT_DIR/_site/localhost+3000/${SITE_PATH}/$(dirname "$rel_path")"
+              out_file="$out_dir/$(basename "$rel_path").plain.html"
+              mkdir -p "$out_dir"
+              if curl -sf "http://localhost:3000/${SITE_PATH}/${rel_path}" | \
+                perl -0777 -ne 'if (/<main[^>]*>(.*?)<\/main>/s) { print $1 }' > "$out_file" && \
+                [ -s "$out_file" ]; then
+                echo "✓ ${rel_path}.plain.html"
+              else
+                echo "✗ ${rel_path}.plain.html"
+                rm -f "$out_file"
+                FAILED=$((FAILED + 1))
+              fi
+            done < <(find src/pages/includes -name "*.md")
+
+            if [ "$FAILED" -gt 0 ]; then
+              echo "ERROR: $FAILED fragment include(s) failed to fetch"
+              exit 1
+            fi
+          fi
 
       - name: Rewrite paths for GitHub Pages
         run: |
@@ -440,6 +456,20 @@ jobs:
           if [ "$HTML_COUNT" -lt 5 ]; then
             echo "ERROR: Only $HTML_COUNT HTML files in output — build likely failed"
             exit 1
+          fi
+
+          if [ "$HTML_COUNT" -lt 5 ]; then
+            echo "ERROR: Only $HTML_COUNT HTML files in output — build likely failed"
+            exit 1
+          fi
+
+          if [ -d "${SITE_PATH}/includes" ]; then
+            INCLUDE_COUNT=$(find "${SITE_PATH}/includes" -name "*.plain.html" | wc -l | tr -d ' ')
+            if [ "$INCLUDE_COUNT" -lt 1 ]; then
+              echo "ERROR: No fragment include .plain.html files in output — Fragment blocks will not render"
+              exit 1
+            fi
+            echo "Fragment includes: $INCLUDE_COUNT .plain.html files"
           fi
 
           echo "✓ Build verification passed"

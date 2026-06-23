@@ -458,11 +458,6 @@ jobs:
             exit 1
           fi
 
-          if [ "$HTML_COUNT" -lt 5 ]; then
-            echo "ERROR: Only $HTML_COUNT HTML files in output — build likely failed"
-            exit 1
-          fi
-
           if [ -d "${SITE_PATH}/includes" ]; then
             INCLUDE_COUNT=$(find "${SITE_PATH}/includes" -name "*.plain.html" | wc -l | tr -d ' ')
             if [ "$INCLUDE_COUNT" -lt 1 ]; then

@@ -131,23 +131,6 @@
     }
   }
 
-  /* Watch for class changes on main element */
-  new MutationObserver(function(mutations) {
-    mutations.forEach(function(mutation) {
-      if (mutation.target.tagName === "MAIN" && mutation.attributeName === "class") {
-        fixSideNav();
-      }
-    });
-  }).observe(document.documentElement, {
-    attributes: true,
-    subtree: true,
-    attributeFilter: ["class"]
-  });
-
-  document.addEventListener("DOMContentLoaded", fixSideNav);
-  setTimeout(fixSideNav, 500);
-  setTimeout(fixSideNav, 1500);
-
   /* Filter TOC to show only current section items */
   function filterToc() {
     var nav = document.querySelector("#navigation-links");
@@ -190,10 +173,6 @@
     });
   }
 
-  setTimeout(filterToc, 1000);
-  setTimeout(filterToc, 2000);
-  setTimeout(filterToc, 3000);
-
   /* Fix superhero background image */
   function fixSuperheroBackground() {
     var superhero = document.querySelector(".superhero");
@@ -215,7 +194,22 @@
     }
   }
 
-  document.addEventListener("DOMContentLoaded", fixSuperheroBackground);
-  setTimeout(fixSuperheroBackground, 500);
-  setTimeout(fixSuperheroBackground, 1500);
+  function runLayoutFixes() {
+    fixSideNav();
+    filterToc();
+    fixSuperheroBackground();
+  }
+
+  document.addEventListener("DOMContentLoaded", runLayoutFixes);
+
+  var layoutTimer;
+  new MutationObserver(function() {
+    clearTimeout(layoutTimer);
+    layoutTimer = setTimeout(runLayoutFixes, 50);
+  }).observe(document.documentElement, {
+    childList: true,
+    subtree: true,
+    attributes: true,
+    attributeFilter: ["class"]
+  });
 })();
